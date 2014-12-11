@@ -1,0 +1,56 @@
+<! ---Demo of rendering weather with three.js--->
+
+
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Weather Demo in Three.js</title>
+	</head>
+	<body>
+		<canvas id='theCanvas' width='600' height='400'>
+		Please use a browser that supports 'canvas'
+		</canvas>
+
+		<script src='http://threejs.org/build/three.min.js'></script>
+		<script src='WeatherSim.js' = main></script>
+		<script>window.onload = start</script>
+
+		<script type="x-shader/x-vertex" id="WeatherSim_vs">
+			uniform float radiusX;
+			uniform float radiusZ;
+			uniform float size;
+			uniform float scale;
+			uniform float height;
+			uniform float elapsedTime;
+			uniform float speedH;
+			uniform float speedV;
+
+			void main() {
+				vec3 pos = position;
+				pos.x += cos((elapsedTime + position.z) * 0.25 * speedH) * radiusX;
+				pos.y = mod(pos.y - elapsedTime * speedV, height);
+				pos.z += sin((elapsedTime + position.x) * 0.25 * speedH) * radiusZ;
+
+				vec4 mvPosition = modelViewMatrix * vec4( pos, 1.0 );
+
+				gl_PointSize = size * ( scale / length( mvPosition.xyz ) );
+
+				gl_Position = projectionMatrix * mvPosition;
+			}
+		</script>
+
+		<script type="x-shader/x-fragment" id="WeatherSim_fs">
+			uniform vec3 color;
+			uniform float opacity;
+			uniform sampler2D texture;
+
+			void main() {
+				vec4 texColor = texture2D( texture, gl_PointCoord );
+				gl_FragColor = texColor * vec4( color, opacity );
+			}
+		</script>
+
+
+	</body>
+</html
